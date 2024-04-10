@@ -1,1 +1,32 @@
-<p>login works!</p>
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <div class="container__login">
+    <h6 class="text-class">Bienvenido, por favor ingrese sus credenciales para continuar</h6>
+    <article class="container card-max-width">
+      <div class="card-body">
+        <form class="form" (ngSubmit)="onLogin()" [formGroup]="formularioLogin">
+          <div class="mb-3">
+            <input
+              formControlName="usuario"
+              type="text"
+              class="form-control"
+              placeholder="Correo o Usuario"
+              autocomplete="off"
+            />
+          </div>
+          <div class="mb-3">
+            <input
+              formControlName="contrasenia"
+              [type]="toggleBtn ? 'text' : 'password'"
+              class="form-control"
+              placeholder="Contraseña"
+            />
+          </div>
+          <div class="mb-3">
+            <button type="submit" class="btn btn-primary" [disabled]="formularioLogin.invalid">Ingresar</button>
+          </div>
+
+        </form>
+      </div>
+    </article>
+  </div>
+</div>
