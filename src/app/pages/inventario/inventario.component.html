@@ -1,32 +1,34 @@
 <main>
   <div class="card">
     <div class="card-header pb-4">
-      <h5 class="card-title">Inventario</h5>
-      <form class="form-inline row">
-        <div class="input-group">
-          <div class="col-md-4 mb-3 mb-md-0">
-            <input
-              class="form-control"
-              type="search"
-              placeholder="Buscar producto"
-              aria-label="Buscar"
-            />
-          </div>
-          <div class="col-md-4 mb-3 mb-md-0">
-            <div class="input-group-append  px-3">
-              <button class="btn btn-outline-primary btn-block" type="submit">
-                Buscar
-              </button>
-            </div>
-          </div>
-          <div class="col-md-4 d-flex justify-content-md-end justify-content-between align-items-end flex-md-column flex-row">
-            <button class="btn btn-success mb-3 mb-md-0 mr-md-0 mr-3" (click)="openModal(modalContent)">
-              <i class="bi bi-plus"></i> Agregar
-            </button>
+      <h5 class="card-title mb-3">Inventario</h5>
+      <div class="input-group">
+        <div class="col-md-4 mb-3 mb-md-0">
+          <input
+            class="form-control"
+            type="search"
+            placeholder="Buscar producto"
+            aria-label="Buscar"
+            [(ngModel)]="nombreProducto"
+            (keyup.enter)="buscar()"
+          />
+        </div>
+        <div class="col-md-4 mb-3 mb-md-0">
+          <div class="input-group-append px-3">
+            <button class="btn btn-outline-primary btn-block" (click)="buscar()">Buscar</button>
           </div>
         </div>
-
-      </form>
+        <div
+          class="col-md-4 d-flex justify-content-md-end justify-content-between align-items-end flex-md-column flex-row"
+        >
+          <button
+            class="btn btn-success mb-3 mb-md-0 mr-md-0 mr-3"
+            (click)="openModal(modalContent)"
+          >
+            <i class="bi bi-plus"></i> Agregar
+          </button>
+        </div>
+      </div>
     </div>
     <div class="card-body">
       <div class="table-responsive">
@@ -100,134 +102,160 @@
   </div>
 </main>
 <ng-template #modalContent let-modal>
-  <!-- <div>
-    <div class="modal-header bg-secondary-color text-white rounded-sup card-header shadow-sm py-1">
+  <div class="px-4">
+    <div class="modal-header">
       <div class="modal-title">
-        <div class="d-flex bd-highlight">
-          <div class="p-2 w-100 bd-highlight">
-            <strong>{{ editar ? 'Editar Rol' : 'Crear nuevo Rol' }}</strong>
-          </div>
-        </div>
+        <strong>{{
+          editar ? "Editar Inventario" : "Crear nuevo Inventario"
+        }}</strong>
       </div>
-      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('')"></button>
     </div>
-
-    <div class="modal-body">
-      <div class="row">
-        <form
-          class="px-4 py-2"
-          [formGroup]="formularioGeneral"
-          (ngSubmit)="guardar()"
-          id="formularioRol"
-          name="formularioRol"
-        >
-          <input type="hidden" formControlName="idRol" />
-          <div class="col-12 col-sm-12 pt-2">
-            <div class="form-group">
-              <label class="text-secondary" for="titulo">Nombre del rol:</label>
-              <input
-                type="text"
-                class="form-control rounded-3 shadow-sm custom-placeholder"
-                placeholder="Administrador"
-                formControlName="nombreRol"
-                [class]="esCampoValido('nombreRol')"
-              />
-              <div class="invalid-feedback">
-                <span *ngIf="formularioGeneral.get('nombreRol')?.errors?.['required']">Requiere un nombre</span>
-              </div>
-            </div>
-          </div>
-        </form>
-
-        <div class="row pt-3">
-          <div class="col-md-3">
-            <div class="form-group">
-              <label class="text-secondary">Permisos</label>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group">
-              <label class="text-secondary">Agregar</label>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group">
-              <label class="text-secondary">Editar</label>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group">
-              <label class="text-secondary">Eliminar</label>
-            </div>
-          </div>
-        </div>
-
+    <form
+      class="px-4 py-2"
+      [formGroup]="formularioGeneral"
+      (ngSubmit)="guardar()"
+      id="formularioInventario"
+      name="formularioInventario"
+    >
+      <div class="modal-body">
+        <input type="hidden" formControlName="id" />
         <div class="row">
-          <div class="col-md-3">
-            <label class="text-secondary"> </label>
+          <div class="col-lg-6 mb-3">
+            <label class="label-form mb-2">Nombre del Producto</label>
+            <input
+              formControlName="nombreProducto"
+              class="form-control square-border-secondary"
+              placeholder="Nombre del Producto"
+              [class]="esCampoValido('nombreProducto')"
+            />
+            <div class="invalid-feedback">
+              <div class="d-flex flex-column">
+                @if(formularioGeneral.get('nombreProducto')?.errors?.['required']){
+                <span>Requiere un producto</span>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 mb-3">
+            <label class="label-form mb-2">Descripción del Producto</label>
+            <input
+              formControlName="descripcion"
+              class="form-control square-border-secondary"
+              placeholder="Descripción del Producto"
+              [class]="esCampoValido('descripcion')"
+            />
+            <div class="invalid-feedback">
+              <div class="d-flex flex-column">
+                @if(formularioGeneral.get('descripcion')?.errors?.['required']){
+                <span>Requiere una descripcion</span>
+                }
+              </div>
+            </div>
           </div>
         </div>
-        <div class="row mt-3" *ngFor="let permiso of permisos">
-          <div class="col-md-3">
-            <span>{{ permiso.nombre }}</span>
-          </div>
-          <div class="col-md-3">
-            <span>
-              <div class="form-check form-switch">
-                <input
-                  class="form-check-input"
-                  [(ngModel)]="permiso.crear"
-                  type="checkbox"
-                  role="switch"
-                  id="flexSwitchCheckDefault"
-                />
+        <div class="row pb-3">
+          <div class="col-6 col-sm-6 pt-2">
+            <div class="form-group">
+              <label class="text-secondary" for="titulo">Producto:</label>
+              <ng-select
+                formControlName="producto"
+                placeholder="Selecciona una producto"
+                [class]="esCampoValido('producto')"
+              >
+                <ng-option value="false">Producto terminado</ng-option>
+                <ng-option value="true">Materia prima</ng-option>
+              </ng-select>
+              <div class="invalid-feedback">
+                @if (formularioGeneral.get('producto')?.errors?.['required']){
+                  <span>Requiere un tipo de producto</span>
+                  }
               </div>
-            </span>
+            </div>
           </div>
-          <div class="col-md-3">
-            <span>
-              <div class="form-check form-switch">
-                <input
-                  class="form-check-input"
-                  [(ngModel)]="permiso.editar"
-                  type="checkbox"
-                  role="switch"
-                  id="flexSwitchCheckDefault"
-                />
+          <div class="col-6 col-sm-6 pt-2">
+            <div class="form-group">
+              <label class="text-secondary" for="titulo">Unidad:</label>
+              <ng-select
+                formControlName="unidad"
+                placeholder="Selecciona una unidad"
+                [class]="esCampoValido('unidad')"
+              >
+                @for (unidad of unidades; track unidad.id) {
+                <ng-option [value]="unidad.id">
+                  {{ unidad.nombreUnidad }}
+                </ng-option>
+                }
+              </ng-select>
+              <div class="invalid-feedback">
+                @if (formularioGeneral.get('unidad')?.errors?.['required']){
+                <span>Requiere una unidad</span>
+                }
               </div>
-            </span>
-          </div>
-          <div class="col-md-3">
-            <span>
-              <div class="form-check form-switch">
-                <input
-                  class="form-check-input"
-                  [(ngModel)]="permiso.eliminar"
-                  type="checkbox"
-                  role="switch"
-                  id="flexSwitchCheckDefault"
-                />
-              </div>
-            </span>
+            </div>
           </div>
         </div>
+        <div class="row pb-3">
+          <div class="col-lg-6 mb-3">
+            <label class="label-form mb-2">Cantidad del Producto</label>
+            <input
+            type="number"
+              formControlName="cantidadProducto"
+              class="form-control square-border-secondary"
+              placeholder="Cantidad del Producto"
+              [class]="esCampoValido('cantidadProducto')"
+              min="0"
+            />
+            <div class="invalid-feedback">
+              <div class="d-flex flex-column">
+                @if(formularioGeneral.get('cantidadProducto')?.errors?.['required']){
+                <span>Requiere una cantidad</span>
+                }
+                @if(formularioGeneral.get('cantidadProducto')?.errors?.['negativo']){
+                <span>Minimo 0</span>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-sm-6 pt-2">
+            <div class="form-group">
+              <label class="text-secondary" for="titulo">Tipo de Producto:</label>
+              <ng-select
+                formControlName="tipoProducto"
+                placeholder="Selecciona una tipo de Producto"
+                [class]="esCampoValido('tipoProducto')"
+              >
+                @for (tipoProducto of TipoProductos; track tipoProducto.id) {
+                <ng-option [value]="tipoProducto.id">
+                  {{ tipoProducto.nombreTipo }}
+                </ng-option>
+                }
+              </ng-select>
+              <div class="invalid-feedback">
+                @if (formularioGeneral.get('tipoProducto')?.errors?.['required']){
+                <span>Requiere un tipo producto</span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer justify-content-between px-0">
+          <button
+            (click)="close()"
+            type="button"
+            class="btn btn-outline-secondary shadow-sm w-25 m-0"
+            data-bs-dismiss="modal"
+          >
+            Volver
+          </button>
+          <button
+            form="formularioInventario"
+            type="submit"
+            class="btn btn-danger shadow-primary btn-block w-25 m-0"
+          >
+            {{ editar ? "Editar" : "Guardar" }}
+          </button>
+        </div>
       </div>
-
-      <div class="row"></div>
-      <br />
-      <div class="modal-footer justify-content-between px-0">
-        <button
-          type="button"
-          (click)="close()"
-          class="btn btn-outline-secondary shadow-sm w-25 m-0"
-          data-bs-dismiss="modal"
-        >
-          Volver
-        </button>
-        <button form="formularioRol" type="submit" class="btn btn-danger shadow-primary btn-block w-25 m-0">
-          {{ editar ? 'EDITAR' : 'CREAR' }}
-        </button>
-      </div>
-    </div>
-  </div> -->
+    </form>
+  </div>
 </ng-template>
