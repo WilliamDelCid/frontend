@@ -1,40 +1,233 @@
 <main>
   <div class="card">
-      <div class="card-header pb-4">
-          <h5 class="card-title">Inventario</h5>
-          <form class="form-inline row">
-              <div class="input-group">
-                <div class="col-4">
-                  <input class="form-control" type="search" placeholder="Buscar producto" aria-label="Buscar">
+    <div class="card-header pb-4">
+      <h5 class="card-title">Inventario</h5>
+      <form class="form-inline row">
+        <div class="input-group">
+          <div class="col-md-4 mb-3 mb-md-0">
+            <input
+              class="form-control"
+              type="search"
+              placeholder="Buscar producto"
+              aria-label="Buscar"
+            />
+          </div>
+          <div class="col-md-4 mb-3 mb-md-0">
+            <div class="input-group-append  px-3">
+              <button class="btn btn-outline-primary btn-block" type="submit">
+                Buscar
+              </button>
+            </div>
+          </div>
+          <div class="col-md-4 d-flex justify-content-md-end justify-content-between align-items-end flex-md-column flex-row">
+            <button class="btn btn-success mb-3 mb-md-0 mr-md-0 mr-3" (click)="openModal(modalContent)">
+              <i class="bi bi-plus"></i> Agregar
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table">
+          <thead class="text-center">
+            <tr>
+              <th>Producto</th>
+              <th>Descripción</th>
+              <th>Tipo de producto</th>
+              <th>Tipo de producto</th>
+              <th>Cantidad</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (inventario of inventarios.content; track inventario.id) {
+            <tr class="text-center">
+              <td>{{ inventario.nombreProducto }}</td>
+              <td>{{ inventario.descripcion }}</td>
+              <td>{{ inventario.tipoProducto.nombreTipo }}</td>
+              <td>{{ inventario.unidad.nombreUnidad }}</td>
+              <td>{{ inventario.cantidadProducto }}</td>
+              <td>
+                <span
+                  class="badge {{
+                    inventario.estadoProducto
+                      ? 'text-bg-success'
+                      : 'text-bg-danger'
+                  }}"
+                >
+                  {{ inventario.estadoProducto ? "Activo" : "Inactivo" }}
+                </span>
+              </td>
+              <td>
+                <div
+                  class="actions-container d-flex justify-content-center gap-3"
+                >
+                  <button
+                    class="btn btn-warning"
+                    (click)="openModal(modalContent, inventario.id)"
+                  >
+                    <i class="bi bi-pencil"></i> Editar
+                  </button>
+                  <button
+                    class="btn btn-danger"
+                    (click)="eliminar(inventario.id)"
+                  >
+                    <i class="bi bi-trash"></i> Eliminar
+                  </button>
                 </div>
-                  <div class="input-group-append px-4">
-                      <button class="btn btn-outline-primary" type="submit">Buscar</button>
-                  </div>
-              </div>
-          </form>
+              </td>
+            </tr>
+            } @empty {
+            <td colspan="6" class="text-center">
+              {{ isLoading ? "Cargando..." : "No se encontraron resultados" }}
+            </td>
+            }
+          </tbody>
+        </table>
       </div>
-      <div class="card-body">
-          <table class="table">
-              <thead>
-                  <tr>
-                      <th>ID</th>
-                      <th>Producto</th>
-                      <th>Cantidad</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr>
-                      <td>1</td>
-                      <td>Producto A</td>
-                      <td>10</td>
-                  </tr>
-                  <tr>
-                      <td>2</td>
-                      <td>Producto B</td>
-                      <td>20</td>
-                  </tr>
-              </tbody>
-          </table>
-      </div>
+      <ngb-pagination
+        [pageSize]="inventarios.pageable.pageSize"
+        [collectionSize]="inventarios.totalElements"
+        (pageChange)="pageChange($event)"
+        (page)="(currentPage)"
+        class="d-flex justify-content-end p-2"
+      >
+      </ngb-pagination>
+    </div>
   </div>
 </main>
+<ng-template #modalContent let-modal>
+  <!-- <div>
+    <div class="modal-header bg-secondary-color text-white rounded-sup card-header shadow-sm py-1">
+      <div class="modal-title">
+        <div class="d-flex bd-highlight">
+          <div class="p-2 w-100 bd-highlight">
+            <strong>{{ editar ? 'Editar Rol' : 'Crear nuevo Rol' }}</strong>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('')"></button>
+    </div>
+
+    <div class="modal-body">
+      <div class="row">
+        <form
+          class="px-4 py-2"
+          [formGroup]="formularioGeneral"
+          (ngSubmit)="guardar()"
+          id="formularioRol"
+          name="formularioRol"
+        >
+          <input type="hidden" formControlName="idRol" />
+          <div class="col-12 col-sm-12 pt-2">
+            <div class="form-group">
+              <label class="text-secondary" for="titulo">Nombre del rol:</label>
+              <input
+                type="text"
+                class="form-control rounded-3 shadow-sm custom-placeholder"
+                placeholder="Administrador"
+                formControlName="nombreRol"
+                [class]="esCampoValido('nombreRol')"
+              />
+              <div class="invalid-feedback">
+                <span *ngIf="formularioGeneral.get('nombreRol')?.errors?.['required']">Requiere un nombre</span>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div class="row pt-3">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="text-secondary">Permisos</label>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="text-secondary">Agregar</label>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="text-secondary">Editar</label>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="text-secondary">Eliminar</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-3">
+            <label class="text-secondary"> </label>
+          </div>
+        </div>
+        <div class="row mt-3" *ngFor="let permiso of permisos">
+          <div class="col-md-3">
+            <span>{{ permiso.nombre }}</span>
+          </div>
+          <div class="col-md-3">
+            <span>
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  [(ngModel)]="permiso.crear"
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckDefault"
+                />
+              </div>
+            </span>
+          </div>
+          <div class="col-md-3">
+            <span>
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  [(ngModel)]="permiso.editar"
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckDefault"
+                />
+              </div>
+            </span>
+          </div>
+          <div class="col-md-3">
+            <span>
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  [(ngModel)]="permiso.eliminar"
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckDefault"
+                />
+              </div>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row"></div>
+      <br />
+      <div class="modal-footer justify-content-between px-0">
+        <button
+          type="button"
+          (click)="close()"
+          class="btn btn-outline-secondary shadow-sm w-25 m-0"
+          data-bs-dismiss="modal"
+        >
+          Volver
+        </button>
+        <button form="formularioRol" type="submit" class="btn btn-danger shadow-primary btn-block w-25 m-0">
+          {{ editar ? 'EDITAR' : 'CREAR' }}
+        </button>
+      </div>
+    </div>
+  </div> -->
+</ng-template>
