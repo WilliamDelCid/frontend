@@ -3,6 +3,7 @@ import { SkeletonComponent } from './shared/components/layouts/skeleton/skeleton
 import { LoginComponent } from './components/login/login.component';
 import { LoginGuard } from './core/guards/login.guard';
 import { HomeComponent } from './pages/home/home.component';
+import { InventarioComponent } from './pages/inventario/inventario.component';
 
 
 export const routes: Routes = [
@@ -18,6 +19,10 @@ export const routes: Routes = [
       {
         path:'inicio',
         component:HomeComponent
+      },
+      {
+        path:'inventario',
+        component:InventarioComponent
       }
     ]
   }
