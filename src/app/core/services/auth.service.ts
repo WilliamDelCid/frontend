@@ -1,13 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { JwtDTOIN } from '../interfaces/Ijwt';
 import { JwtDTO } from '../models/jwt-dto';
 import { LoginUsuario } from '../models/login-usuario';
 import { NuevoUsuario } from '../models/nuevo-usuario';
 const TOKEN_KEY = 'AuthToken';
-
 
 @Injectable({
   providedIn: 'root'
@@ -30,5 +29,6 @@ export class AuthService {
   public refresh(dto: JwtDTO): Observable<JwtDTO> {
     return this.http.post<JwtDTO>(this.authURL + 'refresh', dto);
   }
+
 
 }
