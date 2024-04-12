@@ -4,6 +4,7 @@ import { LoginComponent } from './components/login/login.component';
 import { LoginGuard } from './core/guards/login.guard';
 import { HomeComponent } from './pages/home/home.component';
 import { InventarioComponent } from './pages/inventario/inventario.component';
+import { OrdenComponent } from './pages/orden/orden.component';
 
 
 export const routes: Routes = [
@@ -23,6 +24,10 @@ export const routes: Routes = [
       {
         path:'inventario',
         component:InventarioComponent
+      },
+      {
+        path:'ordenes',
+        component:OrdenComponent
       }
     ]
   }

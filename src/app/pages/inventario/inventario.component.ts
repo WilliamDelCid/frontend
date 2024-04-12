@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import {
   AbstractControl,
@@ -11,13 +12,11 @@ import {
 import {
   NgbModal,
   NgbModalRef,
-  NgbModule,
-  NgbPaginationModule,
+  NgbModule
 } from '@ng-bootstrap/ng-bootstrap';
-import { InventarioService } from '../../core/services/inventario.service';
-import Swal from 'sweetalert2';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { CommonModule } from '@angular/common';
+import Swal from 'sweetalert2';
+import { InventarioService } from '../../core/services/inventario.service';
 import { Inventario } from '../interfaces/inventario.interface';
 
 const DEFAULT_PAGE_NUMBER = 1;

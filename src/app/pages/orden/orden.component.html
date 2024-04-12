@@ -1,0 +1,243 @@
+<main>
+  <div class="card">
+    <div class="card-header pb-4">
+      <h5 class="card-title mb-3">Ordenes</h5>
+      <div class="input-group">
+        <div class="col-md-4 mb-3 mb-md-0">
+          <input
+            class="form-control"
+            type="search"
+            placeholder="Buscar producto"
+            aria-label="Buscar"
+            [(ngModel)]="nombreCliente"
+            (keyup.enter)="buscar()"
+          />
+        </div>
+        <div class="col-md-4 mb-3 mb-md-0">
+          <div class="input-group-append px-3">
+            <button
+              class="btn btn-outline-primary btn-block"
+              (click)="buscar()"
+            >
+              Buscar
+            </button>
+          </div>
+        </div>
+        <div
+          class="col-md-4 d-flex justify-content-md-end justify-content-between align-items-end flex-md-column flex-row"
+        >
+          <button
+            class="btn btn-success mb-3 mb-md-0 mr-md-0 mr-3"
+            (click)="openModal(modalContent)"
+          >
+            <i class="bi bi-plus"></i> Agregar
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table">
+          <thead class="text-center">
+            <tr>
+              <th>Cliente</th>
+              <th>Fecha Esperada</th>
+              <th>Cantidad de Producto</th>
+              <th>Estado</th>
+              <th>Producto a Realizar</th>
+              <!-- <th>Estado</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            @for (inventario of ordenes.content; track inventario.id) {
+            <tr class="text-center">
+              <td>{{ inventario.cliente.nombreCliente }}</td>
+              <td>{{ inventario.fechaEsperada }}</td>
+              <td>{{ inventario.cantidadProducto }}</td>
+              <td>{{ inventario.estadoOrden }}</td>
+              <td>{{ inventario.inventario.nombreProducto }}</td>
+              <!-- <td>
+                <span
+                  class="badge {{
+                    inventario.estadoProducto
+                      ? 'text-bg-success'
+                      : 'text-bg-danger'
+                  }}"
+                >
+                  {{ inventario.estadoProducto ? "Activo" : "Inactivo" }}
+                </span>
+              </td> -->
+              <td>
+                <div
+                  class="actions-container d-flex justify-content-center gap-3"
+                ></div>
+              </td>
+            </tr>
+            } @empty {
+            <td colspan="6" class="text-center">
+              {{ isLoading ? "Cargando..." : "No se encontraron resultados" }}
+            </td>
+            }
+          </tbody>
+        </table>
+      </div>
+      <ngb-pagination
+        [pageSize]="ordenes.pageable.pageSize"
+        [collectionSize]="ordenes.totalElements"
+        (pageChange)="pageChange($event)"
+        (page)="(currentPage)"
+        class="d-flex justify-content-end p-2"
+      >
+      </ngb-pagination>
+    </div>
+  </div>
+</main>
+<ng-template #modalContent let-modal>
+  <div class="px-4">
+    <div class="modal-header">
+      <div class="modal-title">
+        <strong> Crear Orden </strong>
+      </div>
+    </div>
+    <form
+      class="px-4 py-2"
+      [formGroup]="formularioGeneral"
+      (ngSubmit)="guardar()"
+      id="formularioInventario"
+      name="formularioInventario"
+    >
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-6 col-sm-6 pt-2">
+            <div class="form-group">
+              <label class="text-secondary" for="titulo">Cliente:</label>
+              <ng-select
+                formControlName="idCliente"
+                placeholder="Selecciona una cliente"
+                [class]="esCampoValido('idCliente')"
+              >
+                @for (cliente of clientes; track cliente.id) {
+                <ng-option [value]="cliente.id">
+                  {{ cliente.nombreCliente }}
+                </ng-option>
+                }
+              </ng-select>
+              <div class="invalid-feedback">
+                @if (formularioGeneral.get('idCliente')?.errors?.['required']){
+                <span>Requiere un cliente</span>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 mb-3">
+            <label class="label-form mb-2">Fecha Esperada</label>
+            <input
+              type="date"
+              formControlName="fechaEsperada"
+              class="form-control square-border-secondary"
+              [class]="esCampoValido('fechaEsperada')"
+            />
+            <div class="invalid-feedback">
+              <div class="d-flex flex-column">
+                @if(formularioGeneral.get('fechaEsperada')?.errors?.['required']){
+                <span>Requiere una fecha</span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row pb-3">
+          <div class="col-lg-6 mb-3">
+            <div class="form-group">
+              <label class="text-secondary" for="titulo"
+                >Tipo de Producto:</label
+              >
+              <ng-select
+                formControlName="tipoProducto"
+                placeholder="Selecciona una tipo de Producto"
+                [class]="esCampoValido('tipoProducto')"
+                (change)="cargarOpcionesSegundoCombo($event)"
+              >
+                @for (tipoProducto of TipoProductos; track tipoProducto.id) {
+                <ng-option [value]="tipoProducto.id">
+                  {{ tipoProducto.nombreTipo }}
+                </ng-option>
+                }
+              </ng-select>
+              <div class="invalid-feedback">
+                @if(formularioGeneral.get('tipoProducto')?.errors?.['required']){
+                <span>Requiere un tipo producto</span>
+                }
+              </div>
+            </div>
+          </div>
+          @if (mostrarCombo) {
+            <div class="col-lg-6 mb-3">
+              <div class="form-group">
+                <label class="text-secondary" for="titulo"
+                  >Producto a Producir:</label
+                >
+                <ng-select
+                  formControlName="idInventario"
+                  placeholder="Selecciona una producto"
+                  [class]="esCampoValido('idInventario')"
+                >
+                  @for (inventario of inventarios; track inventario.id) {
+                  <ng-option [value]="inventario.id">
+                    {{ inventario.nombreProducto }}
+                  </ng-option>
+                  }
+                </ng-select>
+                <div class="invalid-feedback">
+                  @if(formularioGeneral.get('idInventario')?.errors?.['required']){
+                  <span>Requiere un inventario</span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+
+        </div>
+        <div class="row pb-3">
+          <div class="col-6 col-sm-6 pt-2">
+            <label class="label-form mb-2">Cantidad Solicitada</label>
+            <input
+              type="number"
+              formControlName="cantidad"
+              class="form-control square-border-secondary"
+              placeholder="Cantidad Solicitada"
+              [class]="esCampoValido('cantidad')"
+              min="1"
+            />
+            <div class="invalid-feedback">
+              <div class="d-flex flex-column">
+                @if(formularioGeneral.get('cantidad')?.errors?.['required']){
+                <span>Requiere una cantidad</span>
+                } @if(formularioGeneral.get('cantidad')?.errors?.['negativo']){
+                <span>Minimo 1</span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer justify-content-between px-0">
+          <button
+            (click)="close()"
+            type="button"
+            class="btn btn-outline-secondary shadow-sm w-25 m-0"
+            data-bs-dismiss="modal"
+          >
+            Volver
+          </button>
+          <button
+            form="formularioInventario"
+            type="submit"
+            class="btn btn-danger shadow-primary btn-block w-25 m-0"
+          >
+            Guardar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>
