@@ -6,6 +6,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { InventarioComponent } from './pages/inventario/inventario.component';
 import { OrdenComponent } from './pages/orden/orden.component';
 import { rutaGuard } from './core/guards/rutas.guard';
+import { ProduccionComponent } from './pages/produccion/produccion.component';
 
 
 export const routes: Routes = [
@@ -31,6 +32,10 @@ export const routes: Routes = [
       {
         path:'ordenes',
         component:OrdenComponent
+      },
+      {
+        path:'produccion',
+        component:ProduccionComponent
       }
     ]
   }
