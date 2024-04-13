@@ -47,6 +47,7 @@ export class OrdenService {
   listClientes: Cliente[] = [];
   listTipoProducto: TipoProducto[] = [];
   listInventario:Inventario[]=[];
+  listInventarioAll:Inventario[]=[];
   constructor(private inventarioService: HttpClient) {}
 
   getPages(page: number = 0, size: number = 10,nombreProducto: string = '') {
@@ -78,12 +79,18 @@ export class OrdenService {
   }
 
   crear(inventario: FormGroup) {
-    return this.inventarioService.post(`${this.url}`, inventario);
+    return this.inventarioService.post(`${this.url}/crear`, inventario);
   }
 
   getInventario(idTipo:any) {
     return this.inventarioService.get<Inventario[]>(`${this.urlInventario}/tipo/${idTipo}`).subscribe((resp) => {
       this.listInventario = resp;
+    });
+  }
+
+  getPagesInventario() {
+    return this.inventarioService.get<Inventario[]>(`${this.urlInventario}/all`).subscribe((resp) => {
+      this.listInventarioAll = resp;
     });
   }
 

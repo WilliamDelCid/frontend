@@ -7,11 +7,12 @@ import {
   FormsModule,
   ReactiveFormsModule,
   ValidatorFn,
-  Validators,
+  Validators
 } from '@angular/forms';
 import { NgbModal, NgbModalRef, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { OrdenService } from '../../core/services/orden.service';
+import { DetalleMateriaPrimaDto } from '../interfaces/detalleMateria.interface';
 
 const DEFAULT_PAGE_NUMBER = 1;
 @Component({
@@ -33,6 +34,11 @@ export class OrdenComponent implements OnInit {
   formularioGeneral!: FormGroup;
   nombreCliente: string = '';
   mostrarCombo: boolean = false;
+  mostrarCantidad:boolean = false;
+  cantidadExistente!:number;
+
+  detallesMateriaPrima: DetalleMateriaPrimaDto[] = [];
+
   constructor(
     private ordenService: OrdenService,
     private modalService: NgbModal,
@@ -43,18 +49,23 @@ export class OrdenComponent implements OnInit {
     this.ordenService.getPages();
     this.ordenService.getClientes();
     this.ordenService.getTipoProducto();
-    this.formularioGeneral = this.iniciarFormularioGeneral();
+    this.iniciarFormularioGeneral();
   }
 
   iniciarFormularioGeneral() {
-    return this.fb.group({
+    this.formularioGeneral = this.fb.group({
       idCliente: ["", [Validators.required]],
       fechaEsperada: ["", [Validators.required]],
-      cantidad: ["", [Validators.required, this.noNegativoValidator()]],
-      estado: ["", [Validators.required]],
+      cantidad: ["", [Validators.required, Validators.min(1)]],
       idInventario: ["", [Validators.required]],
-      tipoProducto: ["", [Validators.required]],
+      tipoProducto:[""],
+      idInventarioCombo:[""],
+      nombreCombo:[""],
+      cantidadInventario:[""],
+      cantidadUsar:[""],
+      detallesMateriaPrima: [[]]
     });
+
   }
 
   pageChange(page: number) {
@@ -79,14 +90,19 @@ export class OrdenComponent implements OnInit {
 
   openModal(content: TemplateRef<unknown>, idInventario: number = 0) {
     this.formularioGeneral.reset();
+    this.ordenService.getPagesInventario();
+    this.ordenService.getPagesInventario();
       this.modalService.open(content, {
-        size: 'lg',
-        centered: true,
+        size: 'xl',
       });
   }
 
+
   guardar() {
     if (this.formularioGeneral.valid) {
+      this.formularioGeneral.patchValue({
+        detallesMateriaPrima: this.detallesMateriaPrima
+      });
         this.ordenService.crear(this.formularioGeneral.value).subscribe({
           next: () => {
             this.ordenService.getPages();
@@ -141,5 +157,63 @@ export class OrdenComponent implements OnInit {
   get inventarios() {
     return this.ordenService.listInventario;
   }
+
+  get inventariosPage(){
+    return this.ordenService.listInventarioAll;
+  }
+
+  cargarCantidad(event: any) {
+    const idInventarioSeleccionado = event;
+    const inventarioSeleccionado = this.inventariosPage.find(inventario => inventario.id === idInventarioSeleccionado);
+    if (inventarioSeleccionado) {
+      this.mostrarCantidad = true;
+      this.cantidadExistente = inventarioSeleccionado.cantidadProducto;
+      this.formularioGeneral.patchValue({
+        cantidadInventario: this.cantidadExistente,
+        nombreCombo: inventarioSeleccionado.nombreProducto
+      });
+    }
+  }
+
+  agregarDetalle() {
+    const idInventario = this.formularioGeneral.value.idInventarioCombo;
+    const cantidadInventario = this.formularioGeneral.value.cantidadInventario;
+    const nombreCombo = this.formularioGeneral.value.nombreCombo;
+    console.log(nombreCombo);
+
+    const cantidadUsar = this.formularioGeneral.value.cantidadUsar;
+
+    // Validar que la cantidad a usar no exceda la cantidad disponible
+    if (cantidadUsar > cantidadInventario) {
+      // Mostrar un mensaje de error o realizar otra acción
+      console.log('La cantidad a usar excede la cantidad disponible');
+      return; // Salir de la función sin agregar el detalle
+    }
+
+    // Agregar el detalle a la lista
+    const detalle: DetalleMateriaPrimaDto = {
+      idInventario: idInventario,
+      nombre: nombreCombo,
+      cantidad: cantidadUsar
+    };
+    this.detallesMateriaPrima.push(detalle);
+    console.log(this.detallesMateriaPrima);
+
+    // Eliminar el inventario seleccionado de la lista
+    const index = this.inventariosPage.findIndex(inventario => inventario.id === idInventario);
+    if (index !== -1) {
+      this.inventariosPage.splice(index, 1);
+    }
+
+    // Limpiar los campos del formulario
+    this.formularioGeneral.patchValue({
+      idInventarioCombo: "",
+      cantidadInventario: "",
+      cantidadUsar: ""
+    });
+    this.mostrarCantidad = false;
+  }
+
+
 
 }

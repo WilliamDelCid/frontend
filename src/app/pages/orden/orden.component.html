@@ -49,13 +49,13 @@
             </tr>
           </thead>
           <tbody>
-            @for (inventario of ordenes.content; track inventario.id) {
+            @for (orden of ordenes.content; track orden.id) {
             <tr class="text-center">
-              <td>{{ inventario.cliente.nombreCliente }}</td>
-              <td>{{ inventario.fechaEsperada }}</td>
-              <td>{{ inventario.cantidadProducto }}</td>
-              <td>{{ inventario.estadoOrden }}</td>
-              <td>{{ inventario.inventario.nombreProducto }}</td>
+              <td>{{ orden.cliente.nombreCliente }}</td>
+              <td>{{ orden.fechaEsperada }}</td>
+              <td>{{ orden.cantidadProducto }}</td>
+              <td>{{ orden.estadoOrden }}</td>
+              <td>{{ orden.inventario.nombreProducto }}</td>
               <!-- <td>
                 <span
                   class="badge {{
@@ -147,14 +147,14 @@
           </div>
         </div>
         <div class="row pb-3">
-          <div class="col-lg-6 mb-3">
+          <div class="col-lg-6">
             <div class="form-group">
               <label class="text-secondary" for="titulo"
                 >Tipo de Producto:</label
               >
               <ng-select
                 formControlName="tipoProducto"
-                placeholder="Selecciona una tipo de Producto"
+                placeholder="Selecciona un tipo de Producto"
                 [class]="esCampoValido('tipoProducto')"
                 (change)="cargarOpcionesSegundoCombo($event)"
               >
@@ -172,31 +172,30 @@
             </div>
           </div>
           @if (mostrarCombo) {
-            <div class="col-lg-6 mb-3">
-              <div class="form-group">
-                <label class="text-secondary" for="titulo"
-                  >Producto a Producir:</label
-                >
-                <ng-select
-                  formControlName="idInventario"
-                  placeholder="Selecciona una producto"
-                  [class]="esCampoValido('idInventario')"
-                >
-                  @for (inventario of inventarios; track inventario.id) {
-                  <ng-option [value]="inventario.id">
-                    {{ inventario.nombreProducto }}
-                  </ng-option>
-                  }
-                </ng-select>
-                <div class="invalid-feedback">
-                  @if(formularioGeneral.get('idInventario')?.errors?.['required']){
-                  <span>Requiere un inventario</span>
-                  }
-                </div>
+          <div class="col-lg-6">
+            <div class="form-group">
+              <label class="text-secondary" for="titulo"
+                >Producto a Producir:</label
+              >
+              <ng-select
+                formControlName="idInventario"
+                placeholder="Selecciona una producto"
+                [class]="esCampoValido('idInventario')"
+              >
+                @for (inventario of inventarios; track inventario.id) {
+                <ng-option [value]="inventario.id">
+                  {{ inventario.nombreProducto }}
+                </ng-option>
+                }
+              </ng-select>
+              <div class="invalid-feedback">
+                @if(formularioGeneral.get('idInventario')?.errors?.['required']){
+                <span>Requiere un inventario</span>
+                }
               </div>
             </div>
+          </div>
           }
-
         </div>
         <div class="row pb-3">
           <div class="col-6 col-sm-6 pt-2">
@@ -220,6 +219,100 @@
             </div>
           </div>
         </div>
+        <div class="row pb-3">
+          <div class="col-4 col-sm-4 pt-2">
+            <div class="form-group">
+              <label class="text-secondary" for="titulo">Productos:</label>
+              <ng-select
+                formControlName="idInventarioCombo"
+                placeholder="Selecciona un producto"
+                [class]="esCampoValido('idInventarioCombo')"
+                (change)="cargarCantidad($event)"
+              >
+                @for (inventario of inventariosPage; track inventario.id) {
+                <ng-option [value]="inventario.id">
+                  {{ inventario.nombreProducto }}
+                </ng-option>
+                }
+              </ng-select>
+            </div>
+          </div>
+          @if (mostrarCantidad) {
+          <div class="col-3 col-sm-3 pt-2">
+            <div>
+              <label class="text-center">Cantidad Existente</label>
+            </div>
+            <div>
+              <label class="mt-2">{{ cantidadExistente }}</label>
+            </div>
+          </div>
+
+          } @if (mostrarCantidad) {
+          <div class="col-3 col-sm-3 pt-2">
+            <label class="label-form mb-2">Cantidad a usar</label>
+            <input
+              type="number"
+              formControlName="cantidadUsar"
+              class="form-control square-border-secondary"
+              placeholder="cantidad a usar"
+              [class]="esCampoValido('cantidadUsar')"
+              min="1"
+            />
+          </div>
+          }@if (mostrarCantidad) {
+          <div class="col-2 col-sm-2 pt-2">
+            <div>
+              <label class="label-form mb-2"></label>
+            </div>
+            <button class="btn btn-success" (click)="agregarDetalle()">
+              Agregar
+            </button>
+          </div>
+          }
+        </div>
+        <div class="row pb-3">
+          <div class="table-responsive">
+            <table class="table">
+              <thead class="text-center">
+                <tr>
+                  <th>Nombre</th>
+                  <th>Cantidad</th>
+                  <!-- <th>Estado</th> -->
+                </tr>
+              </thead>
+              <tbody>
+                @for (detalle of detallesMateriaPrima; track detalle.idInventario) {
+                <tr class="text-center">
+                  <td>{{ detalle.nombre }}</td>
+                  <td>{{ detalle.cantidad }}</td>
+                  <!-- <td>
+                    <span
+                      class="badge {{
+                        inventario.estadoProducto
+                          ? 'text-bg-success'
+                          : 'text-bg-danger'
+                      }}"
+                    >
+                      {{ inventario.estadoProducto ? "Activo" : "Inactivo" }}
+                    </span>
+                  </td> -->
+                  <td>
+                    <div
+                      class="actions-container d-flex justify-content-center gap-3"
+                    ></div>
+                  </td>
+                </tr>
+                } @empty {
+                <td colspan="6" class="text-center">
+                  {{ isLoading ? "Cargando..." : "No se encontraron resultados" }}
+                </td>
+                }
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
         <div class="modal-footer justify-content-between px-0">
           <button
             (click)="close()"

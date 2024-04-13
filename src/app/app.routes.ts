@@ -5,6 +5,7 @@ import { LoginGuard } from './core/guards/login.guard';
 import { HomeComponent } from './pages/home/home.component';
 import { InventarioComponent } from './pages/inventario/inventario.component';
 import { OrdenComponent } from './pages/orden/orden.component';
+import { rutaGuard } from './core/guards/rutas.guard';
 
 
 export const routes: Routes = [
@@ -23,7 +24,9 @@ export const routes: Routes = [
       },
       {
         path:'inventario',
-        component:InventarioComponent
+        component:InventarioComponent,
+        canActivate:[rutaGuard],
+        data: { expectedRol: ['BODEGA'] },
       },
       {
         path:'ordenes',

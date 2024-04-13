@@ -75,7 +75,7 @@ export class TokenService {
     try {
       const payloadDecoded = atob(payload);
       const values = JSON.parse(payloadDecoded);
-      const AllRoles = values.rol;
+      const AllRoles = values.roles;
       const roles = AllRoles.map((role: string) => role.replace('ROLE_', ''));
       return roles;
     } catch (error) {
