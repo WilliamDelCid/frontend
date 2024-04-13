@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, TemplateRef } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -11,7 +11,7 @@ import {
 } from '@angular/forms';
 import { NgbModal, NgbModalRef, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { OrdenService } from '../../core/services/orden.service';
+import { ProduccionService } from '../../core/services/produccion.service';
 import { DetalleMateriaPrimaDto } from '../interfaces/detalleMateria.interface';
 
 const DEFAULT_PAGE_NUMBER = 1;
@@ -42,15 +42,15 @@ export class ProduccionComponent {
   detallesMateriaPrima: DetalleMateriaPrimaDto[] = [];
 
   constructor(
-    private ordenService: OrdenService,
+    private produccionService: ProduccionService,
     private modalService: NgbModal,
     private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
-    this.ordenService.getPages();
-    this.ordenService.getClientes();
-    this.ordenService.getTipoProducto();
+    this.produccionService.getPages();
+    this.produccionService.getClientes();
+    this.produccionService.getTipoProducto();
     this.iniciarFormularioGeneral();
   }
 
@@ -71,29 +71,29 @@ export class ProduccionComponent {
   }
 
   pageChange(page: number) {
-    this.ordenService.getPages(page - 1);
+    this.produccionService.getPages(page - 1);
   }
 
   get isLoading() {
-    return this.ordenService.isLoading;
+    return this.produccionService.isLoading;
   }
 
   get ordenes() {
-    return this.ordenService.listOrdenes;
+    return this.produccionService.listOrdenes;
   }
 
   get clientes() {
-    return this.ordenService.listClientes;
+    return this.produccionService.listClientes;
   }
 
   get TipoProductos() {
-    return this.ordenService.listTipoProducto;
+    return this.produccionService.listTipoProducto;
   }
 
   openModal(content: TemplateRef<unknown>, idInventario: number = 0) {
     this.formularioGeneral.reset();
-    this.ordenService.getPagesInventario();
-    this.ordenService.getPagesInventario();
+    this.produccionService.getPagesInventario();
+    this.produccionService.getPagesInventario();
       this.modalService.open(content, {
         size: 'xl',
       });
@@ -105,9 +105,9 @@ export class ProduccionComponent {
       this.formularioGeneral.patchValue({
         detallesMateriaPrima: this.detallesMateriaPrima
       });
-        this.ordenService.crear(this.formularioGeneral.value).subscribe({
+        this.produccionService.crear(this.formularioGeneral.value).subscribe({
           next: () => {
-            this.ordenService.getPages();
+            this.produccionService.getPages();
             this.modalService.dismissAll();
             this.currentPage = DEFAULT_PAGE_NUMBER;
           },
@@ -145,23 +145,23 @@ export class ProduccionComponent {
   }
 
   buscar() {
-    this.ordenService.getPages(0, 10, this.nombreCliente);
+    this.produccionService.getPages(0, 10, this.nombreCliente);
   }
 
   cargarOpcionesSegundoCombo(event: any) {
     this.formularioGeneral.get('idInventario')?.reset();
     const tipoProductoId = event;
-    this.ordenService.getInventario(tipoProductoId);
+    this.produccionService.getInventario(tipoProductoId);
     this.mostrarCombo = true;
     this.inventarios;
   }
 
   get inventarios() {
-    return this.ordenService.listInventario;
+    return this.produccionService.listInventario;
   }
 
   get inventariosPage(){
-    return this.ordenService.listInventarioAll;
+    return this.produccionService.listInventarioAll;
   }
 
   cargarCantidad(event: any) {
