@@ -48,12 +48,12 @@ export class OrdenService {
   listTipoProducto: TipoProducto[] = [];
   listInventario:Inventario[]=[];
   listInventarioAll:Inventario[]=[];
-  constructor(private inventarioService: HttpClient) {}
+  constructor(private ordenService: HttpClient) {}
 
   getPages(page: number = 0, size: number = 10,nombreProducto: string = '') {
     this.isLoading = true;
     // nombreProducto: nombreProducto
-    return this.inventarioService
+    return this.ordenService
       .get<RequestResponse<Orden>>(this.url + '/listar', {
         params: {
           page: page.toString(),
@@ -67,29 +67,29 @@ export class OrdenService {
   }
 
   getClientes() {
-    return this.inventarioService.get<Cliente[]>(`${this.urlCliente}`).subscribe((resp) => {
+    return this.ordenService.get<Cliente[]>(`${this.urlCliente}`).subscribe((resp) => {
       this.listClientes = resp;
     });
   }
 
   getTipoProducto() {
-    return this.inventarioService.get<TipoProducto[]>(`${this.urlTipoProducto}`).subscribe((resp) => {
+    return this.ordenService.get<TipoProducto[]>(`${this.urlTipoProducto}`).subscribe((resp) => {
       this.listTipoProducto = resp;
     });
   }
 
   crear(inventario: FormGroup) {
-    return this.inventarioService.post(`${this.url}/crear`, inventario);
+    return this.ordenService.post(`${this.url}/crear`, inventario);
   }
 
   getInventario(idTipo:any) {
-    return this.inventarioService.get<Inventario[]>(`${this.urlInventario}/tipo/${idTipo}`).subscribe((resp) => {
+    return this.ordenService.get<Inventario[]>(`${this.urlInventario}/tipo/${idTipo}`).subscribe((resp) => {
       this.listInventario = resp;
     });
   }
 
   getPagesInventario() {
-    return this.inventarioService.get<Inventario[]>(`${this.urlInventario}/all`).subscribe((resp) => {
+    return this.ordenService.get<Inventario[]>(`${this.urlInventario}/all`).subscribe((resp) => {
       this.listInventarioAll = resp;
     });
   }

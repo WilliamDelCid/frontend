@@ -5,20 +5,21 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { FormGroup } from '@angular/forms';
 import { Cliente, Orden } from '../../pages/interfaces/ordenes.interface';
+import { Produccion } from '../../pages/interfaces/produccion.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProduccionService {
 
-  private url = environment.urlAPI + 'ordenes';
+  private url = environment.urlAPI + 'produccion';
   private urlCliente = environment.urlAPI + 'clientes';
   private urlTipoProducto = environment.urlAPI + 'tipos-producto';
   private urlInventario = environment.urlAPI + 'inventarios';
 
   isLoading = false;
 
-  listOrdenes: RequestResponse<Orden> = {
+  listProduccion: RequestResponse<Produccion> = {
     content: [],
     pageable: {
       offset: 0,
@@ -51,48 +52,47 @@ export class ProduccionService {
   listTipoProducto: TipoProducto[] = [];
   listInventario:Inventario[]=[];
   listInventarioAll:Inventario[]=[];
-  constructor(private inventarioService: HttpClient) {}
+  constructor(private produccionService: HttpClient) {}
 
   getPages(page: number = 0, size: number = 10,nombreProducto: string = '') {
     this.isLoading = true;
-    // nombreProducto: nombreProducto
-    return this.inventarioService
-      .get<RequestResponse<Orden>>(this.url + '/listar', {
+    return this.produccionService
+      .get<RequestResponse<Produccion>>(this.url + '/listar', {
         params: {
           page: page.toString(),
           size: size.toString(),
         },
       })
       .subscribe((data) => {
-        this.listOrdenes = data;
+        this.listProduccion = data;
         this.isLoading = false;
       });
   }
 
   getClientes() {
-    return this.inventarioService.get<Cliente[]>(`${this.urlCliente}`).subscribe((resp) => {
+    return this.produccionService.get<Cliente[]>(`${this.urlCliente}`).subscribe((resp) => {
       this.listClientes = resp;
     });
   }
 
   getTipoProducto() {
-    return this.inventarioService.get<TipoProducto[]>(`${this.urlTipoProducto}`).subscribe((resp) => {
+    return this.produccionService.get<TipoProducto[]>(`${this.urlTipoProducto}`).subscribe((resp) => {
       this.listTipoProducto = resp;
     });
   }
 
   crear(inventario: FormGroup) {
-    return this.inventarioService.post(`${this.url}/crear`, inventario);
+    return this.produccionService.post(`${this.url}/crear`, inventario);
   }
 
   getInventario(idTipo:any) {
-    return this.inventarioService.get<Inventario[]>(`${this.urlInventario}/tipo/${idTipo}`).subscribe((resp) => {
+    return this.produccionService.get<Inventario[]>(`${this.urlInventario}/tipo/${idTipo}`).subscribe((resp) => {
       this.listInventario = resp;
     });
   }
 
   getPagesInventario() {
-    return this.inventarioService.get<Inventario[]>(`${this.urlInventario}/all`).subscribe((resp) => {
+    return this.produccionService.get<Inventario[]>(`${this.urlInventario}/all`).subscribe((resp) => {
       this.listInventarioAll = resp;
     });
   }

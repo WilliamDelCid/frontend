@@ -78,8 +78,8 @@ export class ProduccionComponent {
     return this.produccionService.isLoading;
   }
 
-  get ordenes() {
-    return this.produccionService.listOrdenes;
+  get producciones() {
+    return this.produccionService.listProduccion;
   }
 
   get clientes() {

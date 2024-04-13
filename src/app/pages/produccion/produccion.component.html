@@ -41,33 +41,21 @@
           <thead class="text-center">
             <tr>
               <th>Id Orden</th>
-              <th>Cliente</th>
-              <th>Fecha Esperada</th>
-              <th>Cantidad de Producto</th>
-              <th>Estado</th>
-              <th>Producto a Realizar</th>
+              <th>Fecha Ingreso</th>
+              <th>Linea Producción</th>
+              <th>Estado Producción</th>
+              <th>Fecha Finalización</th>
             </tr>
           </thead>
           <tbody>
-            @for (orden of ordenes.content; track orden.id) {
+            @for (produccion of producciones.content; track produccion.id) {
             <tr class="text-center">
-              <td>{{ orden.id }}</td>
-              <td>{{ orden.cliente.nombreCliente }}</td>
-              <td>{{ orden.fechaEsperada }}</td>
-              <td>{{ orden.cantidadProducto }}</td>
-              <td>{{ orden.estadoOrden }}</td>
-              <td>{{ orden.inventario.nombreProducto }}</td>
-              <!-- <td>
-                <span
-                  class="badge {{
-                    inventario.estadoProducto
-                      ? 'text-bg-success'
-                      : 'text-bg-danger'
-                  }}"
-                >
-                  {{ inventario.estadoProducto ? "Activo" : "Inactivo" }}
-                </span>
-              </td> -->
+              <td>{{ produccion.ordenPedido.id }}</td>
+              <td>{{ produccion.fechaIngreso }}</td>
+              <td>{{ produccion.lineaProduccion }}</td>
+              <td>{{ produccion.estadoProduccion }}</td>
+              <td>{{ produccion.fechaFinalizacion }}</td>
+
               <td>
                 <div
                   class="actions-container d-flex justify-content-center gap-3"
@@ -75,7 +63,7 @@
               </td>
             </tr>
             } @empty {
-            <td colspan="6" class="text-center">
+            <td colspan="5" class="text-center">
               {{ isLoading ? "Cargando..." : "No se encontraron resultados" }}
             </td>
             }
@@ -83,8 +71,8 @@
         </table>
       </div>
       <ngb-pagination
-        [pageSize]="ordenes.pageable.pageSize"
-        [collectionSize]="ordenes.totalElements"
+        [pageSize]="producciones.pageable.pageSize"
+        [collectionSize]="producciones.totalElements"
         (pageChange)="pageChange($event)"
         (page)="(currentPage)"
         class="d-flex justify-content-end p-2"
