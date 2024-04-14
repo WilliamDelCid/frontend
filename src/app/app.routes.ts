@@ -7,6 +7,7 @@ import { InventarioComponent } from './pages/inventario/inventario.component';
 import { OrdenComponent } from './pages/orden/orden.component';
 import { rutaGuard } from './core/guards/rutas.guard';
 import { ProduccionComponent } from './pages/produccion/produccion.component';
+import { NotFountComponent } from './shared/components/not-fount/not-fount.component';
 
 
 export const routes: Routes = [
@@ -31,12 +32,20 @@ export const routes: Routes = [
       },
       {
         path:'ordenes',
-        component:OrdenComponent
+        component:OrdenComponent,
+        canActivate:[rutaGuard],
+        data: { expectedRol: ['PRODUCCION'] },
       },
       {
         path:'produccion',
-        component:ProduccionComponent
+        component:ProduccionComponent,
+        canActivate:[rutaGuard],
+        data: { expectedRol: ['PRODUCCION'] },
       }
     ]
+  },
+  {
+    path: '**',
+    component: NotFountComponent
   }
 ];
