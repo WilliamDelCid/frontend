@@ -11,6 +11,7 @@ import { NgbModal, NgbModalRef, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ProduccionService } from '../../core/services/produccion.service';
 import { DetalleMateriaPrimaDto } from '../interfaces/detalleMateria.interface';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 const DEFAULT_PAGE_NUMBER = 1;
 
@@ -37,13 +38,14 @@ export class ProduccionComponent {
   mostrarCombo: boolean = false;
   mostrarCantidad:boolean = false;
   cantidadExistente!:number;
-
+  estado!: number;
+  fechaEsperada!: string;
   detallesMateriaPrima: DetalleMateriaPrimaDto[] = [];
   idOrden!:number;
   constructor(
     private produccionService: ProduccionService,
     private modalService: NgbModal,
-    private fb: FormBuilder
+    private fb: FormBuilder, private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -152,6 +154,15 @@ export class ProduccionComponent {
     this.produccionService.getPages(0, 10, this.nombreCliente);
   }
 
+  pdfSrc: SafeUrl | null = null;
+
+
+  generarPDF() {
+    this.produccionService.pdf(this.estado, this.fechaEsperada).subscribe((blob: Blob) => {
+      const url = URL.createObjectURL(blob);
+      this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    });
+  }
 
 
 }

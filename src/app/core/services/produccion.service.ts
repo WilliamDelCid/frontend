@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { RequestResponse } from '../models/IRequest';
 import { Inventario, TipoProducto, Unidad } from '../../pages/interfaces/inventario.interface';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { FormGroup } from '@angular/forms';
 import { Cliente, Orden } from '../../pages/interfaces/ordenes.interface';
 import { Produccion } from '../../pages/interfaces/produccion.interface';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -75,6 +76,18 @@ export class ProduccionService {
   }
   finalizar(idOrden:number,produccion: FormGroup) {
     return this.produccionService.put(`${this.url}/${idOrden}/finalizar`, produccion);
+  }
+
+  pdf(estado?: number, fechaEsperada?: string): Observable<Blob> {
+    let params = new HttpParams();
+    if (estado) {
+      params = params.set('estado', estado.toString());
+    }
+    if (fechaEsperada) {
+      params = params.set('fechaEsperada', fechaEsperada);
+    }
+
+    return this.produccionService.get(this.url + '/generar-pdf', { responseType: 'blob', params: params });
   }
 
 

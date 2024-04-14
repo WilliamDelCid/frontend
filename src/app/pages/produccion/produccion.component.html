@@ -92,6 +92,39 @@
     </div>
   </div>
 </main>
+<main class="mt-3">
+  <div class="card">
+    <h5 class="card-title mb-2 px-3 pt-3">Reporte Producción</h5>
+
+   <div class="row px-3">
+    <div class="col-lg-4 mb-4 px-3">
+      <div class="form-group mt-4">
+        <ng-select placeholder="Selecciona un tipo de Producto" [(ngModel)]="estado">
+          <ng-option value="0">En producción</ng-option>
+          <ng-option value="1">Finalizado</ng-option>
+        </ng-select>
+      </div>
+    </div>
+
+    <div class="col-lg-4 mb-4 px-3">
+      <div class="form-group mt-4">
+        <input type="date" class="form-control" [(ngModel)]="fechaEsperada">
+      </div>
+    </div>
+
+    <div class="col-lg-4 mb-4 px-3">
+      <div class="form-group mt-4">
+        <button class="btn btn-primary" (click)="generarPDF()">Generar PDF</button>
+      </div>
+    </div>
+   </div>
+
+  </div>
+  <div *ngIf="pdfSrc">
+    <embed [src]="pdfSrc" type="application/pdf" width="100%" height="600">
+  </div>
+</main>
+
 <ng-template #modalContent let-modal>
   <div class="px-4">
     <div class="modal-header">
