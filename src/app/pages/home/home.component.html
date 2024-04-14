@@ -1,1 +1,54 @@
-<p>home works!</p>
+<main>
+  <h2>Inventario</h2>
+  <section class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table">
+          <thead class="text-center">
+            <tr>
+              <th>Producto</th>
+              <th>Descripción</th>
+              <th>Tipo de producto</th>
+              <th>Unidad</th>
+              <th>Cantidad</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (inventario of inventarios.content; track inventario.id) {
+            <tr class="text-center">
+              <td>{{ inventario.nombreProducto }}</td>
+              <td>{{ inventario.descripcion }}</td>
+              <td>{{ inventario.tipoProducto.nombreTipo }}</td>
+              <td>{{ inventario.unidad.nombreUnidad }}</td>
+              <td>{{ inventario.cantidadProducto }}</td>
+              <td>
+                <span
+                  class="badge {{
+                    inventario.estadoProducto
+                      ? 'text-bg-success'
+                      : 'text-bg-danger'
+                  }}"
+                >
+                  {{ inventario.estadoProducto ? "Activo" : "Inactivo" }}
+                </span>
+              </td>
+
+            </tr>
+            } @empty {
+
+            }
+          </tbody>
+        </table>
+      </div>
+      <ngb-pagination
+        [pageSize]="inventarios.pageable.pageSize"
+        [collectionSize]="inventarios.totalElements"
+        (pageChange)="pageChange($event)"
+        (page)="(currentPage)"
+        class="d-flex justify-content-end p-2"
+      >
+      </ngb-pagination>
+    </div>
+  </section>
+</main>

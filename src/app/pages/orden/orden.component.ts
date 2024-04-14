@@ -101,27 +101,58 @@ export class OrdenComponent implements OnInit {
 
 
   guardar() {
-    console.log('Guardar');
-
     if (this.formularioGeneral.valid) {
-      this.formularioGeneral.patchValue({
-        detallesMateriaPrima: this.detallesMateriaPrima
-      });
+      if (this.detallesMateriaPrima.length > 0) {
+        this.formularioGeneral.patchValue({
+          detallesMateriaPrima: this.detallesMateriaPrima
+        });
         this.ordenService.crear(this.formularioGeneral.value).subscribe({
           next: () => {
             this.ordenService.getPages();
             this.modalService.dismissAll();
             this.currentPage = DEFAULT_PAGE_NUMBER;
+            Swal.fire({
+              icon: 'success',
+              title: 'Guardado',
+              text: 'La orden ha sido creada con éxito',
+              timer: 3000,
+              timerProgressBar: true
+            });
           },
           error: (error: any) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al guardar',
+              text: 'No se pudo guardar la orden '+ error.error.mensaje,
+              timer: 3000,
+              timerProgressBar: true
+            });
             console.log(error);
           },
         });
+      } else {
+        Swal.fire({
+          icon: 'info',
+          title: 'Falta información',
+          text: 'Debe agregar al menos un detalle a la materia prima',
+          timer: 3000,
+          timerProgressBar: true
+        });
+      }
+    } else {
+      Swal.fire({
+        icon: 'info',
+        title: 'Información incompleta',
+        text: 'Por favor complete todos los campos requeridos',
+        timer: 3000,
+        timerProgressBar: true
+      });
     }
     return Object.values(this.formularioGeneral.controls).forEach((control) =>
       control.markAsTouched()
     );
   }
+
 
   close() {
     this.modalService.dismissAll();

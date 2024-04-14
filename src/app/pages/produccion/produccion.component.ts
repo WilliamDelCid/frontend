@@ -13,6 +13,7 @@ import { ProduccionService } from '../../core/services/produccion.service';
 import { DetalleMateriaPrimaDto } from '../interfaces/detalleMateria.interface';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { FechaFormatoPipe } from '../../shared/pipes/fecha-formato.pipe';
+import Swal from 'sweetalert2';
 
 const DEFAULT_PAGE_NUMBER = 1;
 
@@ -107,40 +108,86 @@ export class ProduccionComponent {
   guardar() {
     if (this.formularioGeneral.valid) {
       this.loading = true;
-        this.produccionService.crear(this.formularioGeneral.value).subscribe({
-          next: () => {
-            this.produccionService.getPages();
-            this.modalService.dismissAll();
-            this.currentPage = DEFAULT_PAGE_NUMBER;
-            this.loading = false;
-          },
-          error: (error: any) => {
-            console.log(error);
-            this.loading = false;
-          },
-        });
+      this.produccionService.crear(this.formularioGeneral.value).subscribe({
+        next: () => {
+          this.produccionService.getPages();
+          this.modalService.dismissAll();
+          this.currentPage = DEFAULT_PAGE_NUMBER;
+          this.loading = false;
+          Swal.fire({
+            icon: 'success',
+            title: 'Guardado',
+            text: 'La producción ha sido creada con éxito',
+            timer: 3000,
+            timerProgressBar: true
+          });
+        },
+        error: (error: any) => {
+          this.loading = false;
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al guardar',
+            text: 'No se pudo guardar la producción '+ error.error.mensaje,
+            timer: 3000,
+            timerProgressBar: true
+          });
+          console.log(error);
+        },
+      });
+    } else {
+      Swal.fire({
+        icon: 'info',
+        title: 'Información incompleta',
+        text: 'Por favor complete todos los campos requeridos',
+        timer: 3000,
+        timerProgressBar: true
+      });
     }
     return Object.values(this.formularioGeneral.controls).forEach((control) =>
       control.markAsTouched()
     );
   }
+
   guardarFinalizacion() {
     if (this.formularioFinalizar.valid) {
-        this.produccionService.finalizar(this.idOrden,this.formularioFinalizar.value).subscribe({
-          next: () => {
-            this.produccionService.getPages();
-            this.modalService.dismissAll();
-            this.currentPage = DEFAULT_PAGE_NUMBER;
-          },
-          error: (error: any) => {
-            console.log(error);
-          },
-        });
+      this.produccionService.finalizar(this.idOrden, this.formularioFinalizar.value).subscribe({
+        next: () => {
+          this.produccionService.getPages();
+          this.modalService.dismissAll();
+          this.currentPage = DEFAULT_PAGE_NUMBER;
+          Swal.fire({
+            icon: 'success',
+            title: 'Finalizado',
+            text: 'La producción ha sido finalizada con éxito',
+            timer: 3000,
+            timerProgressBar: true
+          });
+        },
+        error: (error: any) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al finalizar',
+            text: 'No se pudo finalizar la producción',
+            timer: 3000,
+            timerProgressBar: true
+          });
+          console.log(error);
+        },
+      });
+    } else {
+      Swal.fire({
+        icon: 'info',
+        title: 'Información incompleta',
+        text: 'Por favor complete todos los campos requeridos',
+        timer: 3000,
+        timerProgressBar: true
+      });
     }
     return Object.values(this.formularioFinalizar.controls).forEach((control) =>
       control.markAsTouched()
     );
   }
+
 
   close() {
     this.modalService.dismissAll();

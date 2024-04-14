@@ -129,9 +129,22 @@ export class InventarioComponent implements OnInit {
               this.modalService.dismissAll();
               this.editar = false;
               this.currentPage = DEFAULT_PAGE_NUMBER;
+              Swal.fire({
+                icon: 'success',
+                title: 'Actualizado',
+                text: 'El registro ha sido actualizado con éxito',
+                timer: 3000,
+                timerProgressBar: true
+              });
             },
             error: (error: any) => {
-              console.log(error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error al actualizar',
+                text: 'No se pudo actualizar el registro',
+                timer: 3000,
+                timerProgressBar: true
+              });
             },
           });
       } else {
@@ -141,17 +154,39 @@ export class InventarioComponent implements OnInit {
             this.modalService.dismissAll();
             this.editar = false;
             this.currentPage = DEFAULT_PAGE_NUMBER;
+            Swal.fire({
+              icon: 'success',
+              title: 'Guardado',
+              text: 'El registro ha sido guardado con éxito',
+              timer: 3000,
+              timerProgressBar: true
+            });
           },
           error: (error: any) => {
-            console.log(error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al guardar',
+              text: 'No se pudo guardar el registro',
+              timer: 3000,
+              timerProgressBar: true
+            });
           },
         });
       }
+    } else {
+      Swal.fire({
+        icon: 'info',
+        title: 'Información incompleta',
+        text: 'Por favor complete todos los campos requeridos',
+        timer: 3000,
+        timerProgressBar: true
+      });
     }
     return Object.values(this.formularioGeneral.controls).forEach((control) =>
       control.markAsTouched()
     );
   }
+
 
   close() {
     this.modalService.dismissAll();
