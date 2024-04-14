@@ -13,9 +13,7 @@ import { Produccion } from '../../pages/interfaces/produccion.interface';
 export class ProduccionService {
 
   private url = environment.urlAPI + 'produccion';
-  private urlCliente = environment.urlAPI + 'clientes';
-  private urlTipoProducto = environment.urlAPI + 'tipos-producto';
-  private urlInventario = environment.urlAPI + 'inventarios';
+  private urlOrdenes = environment.urlAPI + 'ordenes';
 
   isLoading = false;
 
@@ -48,10 +46,7 @@ export class ProduccionService {
     totalPages: 0,
   };
 
-  listClientes: Cliente[] = [];
-  listTipoProducto: TipoProducto[] = [];
-  listInventario:Inventario[]=[];
-  listInventarioAll:Inventario[]=[];
+  listOrdenes: Orden[] = [];
   constructor(private produccionService: HttpClient) {}
 
   getPages(page: number = 0, size: number = 10,nombreProducto: string = '') {
@@ -69,33 +64,19 @@ export class ProduccionService {
       });
   }
 
-  getClientes() {
-    return this.produccionService.get<Cliente[]>(`${this.urlCliente}`).subscribe((resp) => {
-      this.listClientes = resp;
-    });
-  }
-
-  getTipoProducto() {
-    return this.produccionService.get<TipoProducto[]>(`${this.urlTipoProducto}`).subscribe((resp) => {
-      this.listTipoProducto = resp;
+  getOrdenes() {
+    return this.produccionService.get<Orden[]>(`${this.urlOrdenes}/listar-all`).subscribe((resp) => {
+      this.listOrdenes = resp;
     });
   }
 
   crear(produccion: FormGroup) {
     return this.produccionService.post(`${this.url}/guardar`, produccion);
   }
-
-  getInventario(idTipo:any) {
-    return this.produccionService.get<Inventario[]>(`${this.urlInventario}/tipo/${idTipo}`).subscribe((resp) => {
-      this.listInventario = resp;
-    });
+  finalizar(idOrden:number,produccion: FormGroup) {
+    return this.produccionService.put(`${this.url}/${idOrden}/finalizar`, produccion);
   }
 
-  getPagesInventario() {
-    return this.produccionService.get<Inventario[]>(`${this.urlInventario}/all`).subscribe((resp) => {
-      this.listInventarioAll = resp;
-    });
-  }
 
 }
 

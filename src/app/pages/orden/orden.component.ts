@@ -91,7 +91,6 @@ export class OrdenComponent implements OnInit {
   openModal(content: TemplateRef<unknown>, idInventario: number = 0) {
     this.formularioGeneral.reset();
     this.ordenService.getPagesInventario();
-    this.ordenService.getPagesInventario();
       this.modalService.open(content, {
         size: 'xl',
       });

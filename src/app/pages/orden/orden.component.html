@@ -7,7 +7,7 @@
           <input
             class="form-control"
             type="search"
-            placeholder="Buscar producto"
+            placeholder="Buscar ordenes"
             aria-label="Buscar"
             [(ngModel)]="nombreCliente"
             (keyup.enter)="buscar()"
@@ -114,7 +114,7 @@
               <label class="text-secondary" for="titulo">Cliente:</label>
               <ng-select
                 formControlName="idCliente"
-                placeholder="Selecciona una cliente"
+                placeholder="Seleccione un cliente"
                 [class]="esCampoValido('idCliente')"
               >
                 @for (cliente of clientes; track cliente.id) {

@@ -45,6 +45,7 @@
               <th>Linea Producción</th>
               <th>Estado Producción</th>
               <th>Fecha Finalización</th>
+              <th>Acción</th>
             </tr>
           </thead>
           <tbody>
@@ -55,11 +56,21 @@
               <td>{{ produccion.lineaProduccion }}</td>
               <td>{{ produccion.estadoProduccion }}</td>
               <td>{{ produccion.fechaFinalizacion }}</td>
-
               <td>
                 <div
                   class="actions-container d-flex justify-content-center gap-3"
-                ></div>
+                >
+                  @if(!produccion.estadoProduccion){
+                  <button
+                    class="btn btn-secondary"
+                    (click)="openModal(modalFinalizar, produccion.id)"
+                  >
+                    <i class="bi bi-pencil"></i> Finalizar
+                  </button>
+                  }@else {
+                  <span class="badge text-bg-success"> Finalizado </span>
+                  }
+                </div>
               </td>
             </tr>
             } @empty {
@@ -102,17 +113,18 @@
               <label class="text-secondary" for="titulo">Orden:</label>
               <ng-select
                 formControlName="idOrdenPedido"
-                placeholder="Selecciona una cliente"
+                placeholder="Selecciona una orden"
                 [class]="esCampoValido('idOrdenPedido')"
               >
-                @for (cliente of clientes; track cliente.id) {
-                <ng-option [value]="cliente.id">
-                  {{ cliente.nombreCliente }}
+                @for (orden of ordenes; track orden.id) {
+                <ng-option [value]="orden.id">
+                  {{ orden.id }}
                 </ng-option>
                 }
               </ng-select>
               <div class="invalid-feedback">
-                @if (formularioGeneral.get('idOrdenPedido')?.errors?.['required']){
+                @if
+                (formularioGeneral.get('idOrdenPedido')?.errors?.['required']){
                 <span>Requiere un cliente</span>
                 }
               </div>
@@ -152,6 +164,60 @@
               <div class="invalid-feedback">
                 @if(formularioGeneral.get('lineaProduccion')?.errors?.['required']){
                 <span>Requiere una linea de Producción</span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer justify-content-between px-0">
+          <button
+            (click)="close()"
+            type="button"
+            class="btn btn-outline-secondary shadow-sm w-25 m-0"
+            data-bs-dismiss="modal"
+          >
+            Volver
+          </button>
+          <button
+            form="formularioInventario"
+            type="submit"
+            class="btn btn-danger shadow-primary btn-block w-25 m-0"
+          >
+            Guardar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<ng-template #modalFinalizar let-modal>
+  <div class="px-4">
+    <div class="modal-header">
+      <div class="modal-title">
+        <strong> Finalizar linea de Producción </strong>
+      </div>
+    </div>
+    <form
+      class="px-4 py-2"
+      [formGroup]="formularioFinalizar"
+      (ngSubmit)="guardarFinalizacion()"
+      id="formularioInventario"
+      name="formularioInventario"
+    >
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-6 mb-3">
+            <label class="label-form mb-2">Fecha Finalización</label>
+            <input
+              type="date"
+              formControlName="fechaFinalizacion"
+              class="form-control square-border-secondary"
+              [class]="esCampoValido('fechaFinalizacion')"
+            />
+            <div class="invalid-feedback">
+              <div class="d-flex flex-column">
+                @if(formularioGeneral.get('fechaFinalizacion')?.errors?.['required']){
+                <span>Requiere una fecha Finalización</span>
                 }
               </div>
             </div>

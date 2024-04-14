@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, TemplateRef } from '@angular/core';
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  ValidatorFn,
   Validators
 } from '@angular/forms';
 import { NgbModal, NgbModalRef, NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -34,13 +32,14 @@ export class ProduccionComponent {
   currentPage = DEFAULT_PAGE_NUMBER;
   modalRef: NgbModalRef | undefined;
   formularioGeneral!: FormGroup;
+  formularioFinalizar!: FormGroup;
   nombreCliente: string = '';
   mostrarCombo: boolean = false;
   mostrarCantidad:boolean = false;
   cantidadExistente!:number;
 
   detallesMateriaPrima: DetalleMateriaPrimaDto[] = [];
-
+  idOrden!:number;
   constructor(
     private produccionService: ProduccionService,
     private modalService: NgbModal,
@@ -49,9 +48,9 @@ export class ProduccionComponent {
 
   ngOnInit(): void {
     this.produccionService.getPages();
-    this.produccionService.getClientes();
-    this.produccionService.getTipoProducto();
+    this.produccionService.getOrdenes();
     this.iniciarFormularioGeneral();
+    this.iniciarFormularioFinalizar();
   }
 
   iniciarFormularioGeneral() {
@@ -62,6 +61,14 @@ export class ProduccionComponent {
     });
 
   }
+
+  iniciarFormularioFinalizar() {
+    this.formularioFinalizar = this.fb.group({
+      fechaFinalizacion: ["", [Validators.required]],
+    });
+
+  }
+
 
   pageChange(page: number) {
     this.produccionService.getPages(page - 1);
@@ -75,18 +82,17 @@ export class ProduccionComponent {
     return this.produccionService.listProduccion;
   }
 
-  get clientes() {
-    return this.produccionService.listClientes;
+  get ordenes() {
+    return this.produccionService.listOrdenes;
   }
 
-  get TipoProductos() {
-    return this.produccionService.listTipoProducto;
-  }
 
-  openModal(content: TemplateRef<unknown>, idInventario: number = 0) {
+  openModal(content: TemplateRef<unknown>, idOrden: number = 0) {
     this.formularioGeneral.reset();
-    this.produccionService.getPagesInventario();
-    this.produccionService.getPagesInventario();
+    this.formularioFinalizar.reset();
+    if (idOrden) {
+      this.idOrden = idOrden;
+    }
       this.modalService.open(content, {
         size: 'xl',
       });
@@ -110,6 +116,23 @@ export class ProduccionComponent {
       control.markAsTouched()
     );
   }
+  guardarFinalizacion() {
+    if (this.formularioFinalizar.valid) {
+        this.produccionService.finalizar(this.idOrden,this.formularioFinalizar.value).subscribe({
+          next: () => {
+            this.produccionService.getPages();
+            this.modalService.dismissAll();
+            this.currentPage = DEFAULT_PAGE_NUMBER;
+          },
+          error: (error: any) => {
+            console.log(error);
+          },
+        });
+    }
+    return Object.values(this.formularioFinalizar.controls).forEach((control) =>
+      control.markAsTouched()
+    );
+  }
 
   close() {
     this.modalService.dismissAll();
@@ -124,86 +147,9 @@ export class ProduccionComponent {
       : '';
   }
 
-  noNegativoValidator(): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      const cantidad = control.value;
-      if (cantidad < 1) {
-        return { negativo: true };
-      }
-      return null;
-    };
-  }
 
   buscar() {
     this.produccionService.getPages(0, 10, this.nombreCliente);
-  }
-
-  cargarOpcionesSegundoCombo(event: any) {
-    this.formularioGeneral.get('idInventario')?.reset();
-    const tipoProductoId = event;
-    this.produccionService.getInventario(tipoProductoId);
-    this.mostrarCombo = true;
-    this.inventarios;
-  }
-
-  get inventarios() {
-    return this.produccionService.listInventario;
-  }
-
-  get inventariosPage(){
-    return this.produccionService.listInventarioAll;
-  }
-
-  cargarCantidad(event: any) {
-    const idInventarioSeleccionado = event;
-    const inventarioSeleccionado = this.inventariosPage.find(inventario => inventario.id === idInventarioSeleccionado);
-    if (inventarioSeleccionado) {
-      this.mostrarCantidad = true;
-      this.cantidadExistente = inventarioSeleccionado.cantidadProducto;
-      this.formularioGeneral.patchValue({
-        cantidadInventario: this.cantidadExistente,
-        nombreCombo: inventarioSeleccionado.nombreProducto
-      });
-    }
-  }
-
-  agregarDetalle() {
-    const idInventario = this.formularioGeneral.value.idInventarioCombo;
-    const cantidadInventario = this.formularioGeneral.value.cantidadInventario;
-    const nombreCombo = this.formularioGeneral.value.nombreCombo;
-    console.log(nombreCombo);
-
-    const cantidadUsar = this.formularioGeneral.value.cantidadUsar;
-
-    // Validar que la cantidad a usar no exceda la cantidad disponible
-    if (cantidadUsar > cantidadInventario) {
-      // Mostrar un mensaje de error o realizar otra acción
-      console.log('La cantidad a usar excede la cantidad disponible');
-      return; // Salir de la función sin agregar el detalle
-    }
-
-    // Agregar el detalle a la lista
-    const detalle: DetalleMateriaPrimaDto = {
-      idInventario: idInventario,
-      nombre: nombreCombo,
-      cantidad: cantidadUsar
-    };
-    this.detallesMateriaPrima.push(detalle);
-    console.log(this.detallesMateriaPrima);
-
-    // Eliminar el inventario seleccionado de la lista
-    const index = this.inventariosPage.findIndex(inventario => inventario.id === idInventario);
-    if (index !== -1) {
-      this.inventariosPage.splice(index, 1);
-    }
-
-    // Limpiar los campos del formulario
-    this.formularioGeneral.patchValue({
-      idInventarioCombo: "",
-      cantidadInventario: "",
-      cantidadUsar: ""
-    });
-    this.mostrarCantidad = false;
   }
 
 
