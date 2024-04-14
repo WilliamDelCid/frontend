@@ -18,6 +18,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import Swal from 'sweetalert2';
 import { InventarioService } from '../../core/services/inventario.service';
 import { Inventario } from '../interfaces/inventario.interface';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 const DEFAULT_PAGE_NUMBER = 1;
 @Component({
@@ -42,7 +43,7 @@ export class InventarioComponent implements OnInit {
   constructor(
     private inventarioService: InventarioService,
     private modalService: NgbModal,
-    private fb: FormBuilder
+    private fb: FormBuilder, private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -224,6 +225,15 @@ export class InventarioComponent implements OnInit {
 
   buscar() {
     this.inventarioService.getPages(0, 10, this.nombreProducto);
+  }
+  pdfSrc: SafeUrl | null = null;
+
+
+  cargarOpcionesSegundoCombo(event: any) {
+    this.inventarioService.pdf(event).subscribe((blob: Blob) => {
+      const url = URL.createObjectURL(blob);
+      this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    });
   }
 
 }

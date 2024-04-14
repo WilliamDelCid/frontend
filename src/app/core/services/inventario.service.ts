@@ -4,6 +4,7 @@ import { Inventario, TipoProducto, Unidad } from '../../pages/interfaces/inventa
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { FormGroup } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -90,6 +91,10 @@ export class InventarioService {
 
   buscar(idInventario: number) {
     return this.inventarioService.get<Inventario>(`${this.url}/${idInventario}`);
+  }
+
+  pdf(event:any): Observable<Blob> {
+    return this.inventarioService.get(this.url + '/generar-pdf/'+event, { responseType: 'blob' });
   }
 
 }
