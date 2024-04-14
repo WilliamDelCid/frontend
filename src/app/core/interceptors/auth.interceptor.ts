@@ -33,7 +33,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         Swal.close();
         tokenService.logOut();
         return throwError(err);
-      } else if (err.status === 0) {
+      }else if (err.status === 500) {
+        Swal.close();
+        tokenService.logOut();
+        return throwError(err);
+      }
+      else if (err.status === 0) {
         Swal.close();
         tokenService.logOut();
         return throwError(err);
