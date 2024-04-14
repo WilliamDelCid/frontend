@@ -52,10 +52,30 @@
             @for (produccion of producciones.content; track produccion.id) {
             <tr class="text-center">
               <td>{{ produccion.ordenPedido.id }}</td>
-              <td>{{ produccion.fechaIngreso }}</td>
-              <td>{{ produccion.lineaProduccion }}</td>
-              <td>{{ produccion.estadoProduccion }}</td>
-              <td>{{ produccion.fechaFinalizacion }}</td>
+              <td>{{ produccion.fechaIngreso | fechaFormato }}</td>
+              <td>
+                <span class="badge {{
+                  produccion.lineaProduccion === false
+                    ? 'bg-info'
+                    : produccion.lineaProduccion === true
+                      ? 'bg-success'
+                      : 'bg-warning'
+                }}">
+                  {{ produccion.lineaProduccion === false ? "Linea Ropa" : "Linea Gorra" }}
+                </span>
+              </td>
+
+              <td>
+                <span class="badge {{
+                  produccion.estadoProduccion === true
+                    ? 'bg-info'
+                    : 'bg-success'
+                }}">
+                  {{ produccion.estadoProduccion === false ? "Producción" : "Finalizado" }}
+                </span>
+              </td>
+
+              <td>{{ produccion.fechaFinalizacion | fechaFormato }}</td>
               <td>
                 <div
                   class="actions-container d-flex justify-content-center gap-3"
@@ -156,9 +176,8 @@
                 }
               </ng-select>
               <div class="invalid-feedback">
-                @if
-                (formularioGeneral.get('idOrdenPedido')?.errors?.['required']){
-                <span>Requiere un cliente</span>
+                @if(formularioGeneral.get('idOrdenPedido')?.errors?.['required']){
+                <span>Requiere una Orden</span>
                 }
               </div>
             </div>
@@ -215,6 +234,7 @@
             form="formularioInventario"
             type="submit"
             class="btn btn-danger shadow-primary btn-block w-25 m-0"
+            [disabled]="loading"
           >
             Guardar
           </button>

@@ -12,6 +12,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ProduccionService } from '../../core/services/produccion.service';
 import { DetalleMateriaPrimaDto } from '../interfaces/detalleMateria.interface';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { FechaFormatoPipe } from '../../shared/pipes/fecha-formato.pipe';
 
 const DEFAULT_PAGE_NUMBER = 1;
 
@@ -25,6 +26,7 @@ const DEFAULT_PAGE_NUMBER = 1;
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
+    FechaFormatoPipe
   ],
   templateUrl: './produccion.component.html',
   styleUrl: './produccion.component.scss'
@@ -42,6 +44,7 @@ export class ProduccionComponent {
   fechaEsperada!: string;
   detallesMateriaPrima: DetalleMateriaPrimaDto[] = [];
   idOrden!:number;
+  loading = false;
   constructor(
     private produccionService: ProduccionService,
     private modalService: NgbModal,
@@ -103,14 +106,17 @@ export class ProduccionComponent {
 
   guardar() {
     if (this.formularioGeneral.valid) {
+      this.loading = true;
         this.produccionService.crear(this.formularioGeneral.value).subscribe({
           next: () => {
             this.produccionService.getPages();
             this.modalService.dismissAll();
             this.currentPage = DEFAULT_PAGE_NUMBER;
+            this.loading = false;
           },
           error: (error: any) => {
             console.log(error);
+            this.loading = false;
           },
         });
     }

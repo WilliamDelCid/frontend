@@ -53,9 +53,20 @@
             <tr class="text-center">
               <td>{{ orden.id }}</td>
               <td>{{ orden.cliente.nombreCliente }}</td>
-              <td>{{ orden.fechaEsperada }}</td>
+              <td>{{ orden.fechaEsperada | fechaFormato }}</td>
               <td>{{ orden.cantidadProducto }}</td>
-              <td>{{ orden.estadoOrden }}</td>
+              <td>
+                <span class="badge {{
+                  orden.estadoOrden === 2
+                    ? 'text-bg-success'
+                    : orden.estadoOrden === 1
+                      ? 'text-bg-info'
+                      : 'text-bg-warning'
+                }}">
+                  {{ orden.estadoOrden === 2 ? "Finalizado" : orden.estadoOrden === 1 ? "En proceso" : "Pendiente" }}
+                </span>
+              </td>
+
               <td>{{ orden.inventario.nombreProducto }}</td>
               <!-- <td>
                 <span
@@ -103,7 +114,6 @@
     <form
       class="px-4 py-2"
       [formGroup]="formularioGeneral"
-      (ngSubmit)="guardar()"
       id="formularioInventario"
       name="formularioInventario"
     >
@@ -281,7 +291,8 @@
                 </tr>
               </thead>
               <tbody>
-                @for (detalle of detallesMateriaPrima; track detalle.idInventario) {
+                @for (detalle of detallesMateriaPrima; track
+                detalle.idInventario) {
                 <tr class="text-center">
                   <td>{{ detalle.nombre }}</td>
                   <td>{{ detalle.cantidad }}</td>
@@ -293,7 +304,9 @@
                 </tr>
                 } @empty {
                 <td colspan="6" class="text-center">
-                  {{ isLoading ? "Cargando..." : "No se encontraron resultados" }}
+                  {{
+                    isLoading ? "Cargando..." : "No se encontraron resultados"
+                  }}
                 </td>
                 }
               </tbody>
@@ -311,7 +324,7 @@
           </button>
           <button
             form="formularioInventario"
-            type="submit"
+            (click)="guardar()"
             class="btn btn-danger shadow-primary btn-block w-25 m-0"
           >
             Guardar

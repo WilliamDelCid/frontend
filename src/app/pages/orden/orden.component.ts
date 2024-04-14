@@ -13,6 +13,8 @@ import { NgbModal, NgbModalRef, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { OrdenService } from '../../core/services/orden.service';
 import { DetalleMateriaPrimaDto } from '../interfaces/detalleMateria.interface';
+import Swal from 'sweetalert2';
+import { FechaFormatoPipe } from '../../shared/pipes/fecha-formato.pipe';
 
 const DEFAULT_PAGE_NUMBER = 1;
 @Component({
@@ -24,6 +26,7 @@ const DEFAULT_PAGE_NUMBER = 1;
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
+    FechaFormatoPipe
   ],
   templateUrl: './orden.component.html',
   styleUrl: './orden.component.scss',
@@ -98,6 +101,8 @@ export class OrdenComponent implements OnInit {
 
 
   guardar() {
+    console.log('Guardar');
+
     if (this.formularioGeneral.valid) {
       this.formularioGeneral.patchValue({
         detallesMateriaPrima: this.detallesMateriaPrima
@@ -178,18 +183,41 @@ export class OrdenComponent implements OnInit {
     const idInventario = this.formularioGeneral.value.idInventarioCombo;
     const cantidadInventario = this.formularioGeneral.value.cantidadInventario;
     const nombreCombo = this.formularioGeneral.value.nombreCombo;
-    console.log(nombreCombo);
-
     const cantidadUsar = this.formularioGeneral.value.cantidadUsar;
-
-    // Validar que la cantidad a usar no exceda la cantidad disponible
+    if (isNaN(cantidadUsar)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'La cantidad a usar debe ser un número válido'
+      });
+      return;
+    }
+    if (!cantidadUsar) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'La cantidad a usar no puede estar vacía'
+      });
+      return;
+    }
     if (cantidadUsar > cantidadInventario) {
-      // Mostrar un mensaje de error o realizar otra acción
-      console.log('La cantidad a usar excede la cantidad disponible');
-      return; // Salir de la función sin agregar el detalle
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'La cantidad a usar excede la cantidad disponible'
+      });
+      return;
+    }
+    if (cantidadUsar === 0) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'La cantidad a usar no puede ser 0'
+      });
+      return;
     }
 
-    // Agregar el detalle a la lista
+
     const detalle: DetalleMateriaPrimaDto = {
       idInventario: idInventario,
       nombre: nombreCombo,

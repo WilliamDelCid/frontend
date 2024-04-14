@@ -125,13 +125,13 @@
     </div>
 
   </div>
-  <div *ngIf="pdfSrc">
-    <embed [src]="pdfSrc" type="application/pdf" width="100%" height="600">
-  </div>
+
 
 
 </main>
-
+<div *ngIf="pdfSrc">
+  <embed [src]="pdfSrc" type="application/pdf" width="100%" height="600">
+</div>
 <ng-template #modalContent let-modal>
   <div class="px-4">
     <div class="modal-header">
