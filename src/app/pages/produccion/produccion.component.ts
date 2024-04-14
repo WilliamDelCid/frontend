@@ -56,16 +56,9 @@ export class ProduccionComponent {
 
   iniciarFormularioGeneral() {
     this.formularioGeneral = this.fb.group({
-      idCliente: ["", [Validators.required]],
-      fechaEsperada: ["", [Validators.required]],
-      cantidad: ["", [Validators.required, Validators.min(1)]],
-      idInventario: ["", [Validators.required]],
-      tipoProducto:[""],
-      idInventarioCombo:[""],
-      nombreCombo:[""],
-      cantidadInventario:[""],
-      cantidadUsar:[""],
-      detallesMateriaPrima: [[]]
+      idOrdenPedido: ["", [Validators.required]],
+      fechaIngreso: ["", [Validators.required]],
+      lineaProduccion: ["", [Validators.required]],
     });
 
   }
@@ -102,9 +95,6 @@ export class ProduccionComponent {
 
   guardar() {
     if (this.formularioGeneral.valid) {
-      this.formularioGeneral.patchValue({
-        detallesMateriaPrima: this.detallesMateriaPrima
-      });
         this.produccionService.crear(this.formularioGeneral.value).subscribe({
           next: () => {
             this.produccionService.getPages();

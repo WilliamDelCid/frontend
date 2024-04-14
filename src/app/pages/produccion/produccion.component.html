@@ -85,7 +85,7 @@
   <div class="px-4">
     <div class="modal-header">
       <div class="modal-title">
-        <strong> Crear Orden </strong>
+        <strong> Crear linea de Producción </strong>
       </div>
     </div>
     <form
@@ -99,11 +99,11 @@
         <div class="row">
           <div class="col-6 col-sm-6 pt-2">
             <div class="form-group">
-              <label class="text-secondary" for="titulo">Cliente:</label>
+              <label class="text-secondary" for="titulo">Orden:</label>
               <ng-select
-                formControlName="idCliente"
+                formControlName="idOrdenPedido"
                 placeholder="Selecciona una cliente"
-                [class]="esCampoValido('idCliente')"
+                [class]="esCampoValido('idOrdenPedido')"
               >
                 @for (cliente of clientes; track cliente.id) {
                 <ng-option [value]="cliente.id">
@@ -112,23 +112,23 @@
                 }
               </ng-select>
               <div class="invalid-feedback">
-                @if (formularioGeneral.get('idCliente')?.errors?.['required']){
+                @if (formularioGeneral.get('idOrdenPedido')?.errors?.['required']){
                 <span>Requiere un cliente</span>
                 }
               </div>
             </div>
           </div>
           <div class="col-lg-6 mb-3">
-            <label class="label-form mb-2">Fecha Esperada</label>
+            <label class="label-form mb-2">Fecha Ingreso</label>
             <input
               type="date"
-              formControlName="fechaEsperada"
+              formControlName="fechaIngreso"
               class="form-control square-border-secondary"
-              [class]="esCampoValido('fechaEsperada')"
+              [class]="esCampoValido('fechaIngreso')"
             />
             <div class="invalid-feedback">
               <div class="d-flex flex-column">
-                @if(formularioGeneral.get('fechaEsperada')?.errors?.['required']){
+                @if(formularioGeneral.get('fechaIngreso')?.errors?.['required']){
                 <span>Requiere una fecha</span>
                 }
               </div>
@@ -139,153 +139,22 @@
           <div class="col-lg-6">
             <div class="form-group">
               <label class="text-secondary" for="titulo"
-                >Tipo de Producto:</label
+                >Linea de Producción:</label
               >
               <ng-select
-                formControlName="tipoProducto"
-                placeholder="Selecciona un tipo de Producto"
-                [class]="esCampoValido('tipoProducto')"
-                (change)="cargarOpcionesSegundoCombo($event)"
+                formControlName="lineaProduccion"
+                placeholder="Selecciona una linea de Producción"
+                [class]="esCampoValido('lineaProduccion')"
               >
-                @for (tipoProducto of TipoProductos; track tipoProducto.id) {
-                <ng-option [value]="tipoProducto.id">
-                  {{ tipoProducto.nombreTipo }}
-                </ng-option>
-                }
+                <ng-option value="false">Línea Ropa</ng-option>
+                <ng-option value="true">Línea Gorra</ng-option>
               </ng-select>
               <div class="invalid-feedback">
-                @if(formularioGeneral.get('tipoProducto')?.errors?.['required']){
-                <span>Requiere un tipo producto</span>
+                @if(formularioGeneral.get('lineaProduccion')?.errors?.['required']){
+                <span>Requiere una linea de Producción</span>
                 }
               </div>
             </div>
-          </div>
-          @if (mostrarCombo) {
-          <div class="col-lg-6">
-            <div class="form-group">
-              <label class="text-secondary" for="titulo"
-                >Producto a Producir:</label
-              >
-              <ng-select
-                formControlName="idInventario"
-                placeholder="Selecciona una producto"
-                [class]="esCampoValido('idInventario')"
-              >
-                @for (inventario of inventarios; track inventario.id) {
-                <ng-option [value]="inventario.id">
-                  {{ inventario.nombreProducto }}
-                </ng-option>
-                }
-              </ng-select>
-              <div class="invalid-feedback">
-                @if(formularioGeneral.get('idInventario')?.errors?.['required']){
-                <span>Requiere un inventario</span>
-                }
-              </div>
-            </div>
-          </div>
-          }
-        </div>
-        <div class="row pb-3">
-          <div class="col-6 col-sm-6 pt-2">
-            <label class="label-form mb-2">Cantidad Solicitada</label>
-            <input
-              type="number"
-              formControlName="cantidad"
-              class="form-control square-border-secondary"
-              placeholder="Cantidad Solicitada"
-              [class]="esCampoValido('cantidad')"
-              min="1"
-            />
-            <div class="invalid-feedback">
-              <div class="d-flex flex-column">
-                @if(formularioGeneral.get('cantidad')?.errors?.['required']){
-                <span>Requiere una cantidad</span>
-                } @if(formularioGeneral.get('cantidad')?.errors?.['negativo']){
-                <span>Minimo 1</span>
-                }
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row pb-3">
-          <div class="col-4 col-sm-4 pt-2">
-            <div class="form-group">
-              <label class="text-secondary" for="titulo">Productos:</label>
-              <ng-select
-                formControlName="idInventarioCombo"
-                placeholder="Selecciona un producto"
-                [class]="esCampoValido('idInventarioCombo')"
-                (change)="cargarCantidad($event)"
-              >
-                @for (inventario of inventariosPage; track inventario.id) {
-                <ng-option [value]="inventario.id">
-                  {{ inventario.nombreProducto }}
-                </ng-option>
-                }
-              </ng-select>
-            </div>
-          </div>
-          @if (mostrarCantidad) {
-          <div class="col-3 col-sm-3 pt-2">
-            <div>
-              <label class="text-center">Cantidad Existente</label>
-            </div>
-            <div>
-              <label class="mt-2">{{ cantidadExistente }}</label>
-            </div>
-          </div>
-
-          } @if (mostrarCantidad) {
-          <div class="col-3 col-sm-3 pt-2">
-            <label class="label-form mb-2">Cantidad a usar</label>
-            <input
-              type="number"
-              formControlName="cantidadUsar"
-              class="form-control square-border-secondary"
-              placeholder="cantidad a usar"
-              [class]="esCampoValido('cantidadUsar')"
-              min="1"
-            />
-          </div>
-          }@if (mostrarCantidad) {
-          <div class="col-2 col-sm-2 pt-2">
-            <div>
-              <label class="label-form mb-2"></label>
-            </div>
-            <button class="btn btn-success" (click)="agregarDetalle()">
-              Agregar
-            </button>
-          </div>
-          }
-        </div>
-        <div class="row pb-3">
-          <div class="table-responsive">
-            <table class="table">
-              <thead class="text-center">
-                <tr>
-                  <th>Nombre</th>
-                  <th>Cantidad</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (detalle of detallesMateriaPrima; track detalle.idInventario) {
-                <tr class="text-center">
-                  <td>{{ detalle.nombre }}</td>
-                  <td>{{ detalle.cantidad }}</td>
-                  <td>
-                    <div
-                      class="actions-container d-flex justify-content-center gap-3"
-                    ></div>
-                  </td>
-                </tr>
-                } @empty {
-                <td colspan="6" class="text-center">
-                  {{ isLoading ? "Cargando..." : "No se encontraron resultados" }}
-                </td>
-                }
-              </tbody>
-            </table>
           </div>
         </div>
         <div class="modal-footer justify-content-between px-0">

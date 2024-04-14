@@ -81,8 +81,8 @@ export class ProduccionService {
     });
   }
 
-  crear(inventario: FormGroup) {
-    return this.produccionService.post(`${this.url}/crear`, inventario);
+  crear(produccion: FormGroup) {
+    return this.produccionService.post(`${this.url}/guardar`, produccion);
   }
 
   getInventario(idTipo:any) {
