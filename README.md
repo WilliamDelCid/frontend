@@ -26,3 +26,11 @@ Pasos para instalar el frontend.
 1. Descargar el proyecto desde el repositorio.
 2. Dentro del proyecto en la terminal asegurandose que esta en el proyecto ejecutar el comando npm install para descargar los paquetes y luego con el backend levantado ejecutar el comando ng serve -o e ir a la ruta generada 
 http://localhost:4200/
+
+Usuario 1:
+nombre de usuario: produccion
+contraseña: Admin1234.$
+
+Usuario 2:
+nombre de usuario: bodega
+contraseña: Admin1234.$
