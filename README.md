@@ -1,27 +1,27 @@
-# Frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.2.1.
+# Prueba Tecnica
 
-## Development server
+Este readme es creado con la finalizada de poder instalar y probar la
+prueba tecnica enviada.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Ruta de FrontEnd Angular 17+: 
+ - [GitHub FrontEnd](https://github.com/WilliamDelCid/frontend)
+ Ruta de BackEnd Spring Boot 3+: 
+ - [GitHub BackEnd](https://github.com/WilliamDelCid/backend)
 
-## Code scaffolding
+Pasos para instalar el backend.
+1. Descargar el proyecto desde el repositorio.
+2. Cambiar las credenciales en el archivo src/main/resources/application.properties y colocar las credenciales para conectarse a su gestor de base de datos MySQL.
+3. Crear la base de datos en su gestor de base de datos para que JPA pueda encontrarla, las tablas se crearan de forma automatica.
+4. En el proyecto se encuentra un archivo data.sql este insertara de manera
+automatica datos para que se pueda llevar a cabo las pruebas
+5. Ejecutar con Run el archivo BackendApplication
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+    Nota: Si se ejecutara por segunda vez el backend cambiar del archivo 
+    application.properties el valor en spring.sql.init.mode a never ya que 
+    intentara ingresar la data por segunda vez.
 
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Pasos para instalar el frontend.
+1. Descargar el proyecto desde el repositorio.
+2. Dentro del proyecto en la terminal asegurandose que esta en el proyecto ejecutar el comando npm install para descargar los paquetes y luego con el backend levantado ejecutar el comando ng serve -o e ir a la ruta generada 
+http://localhost:4200/
